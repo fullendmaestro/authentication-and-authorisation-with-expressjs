@@ -105,8 +105,31 @@ const load_user_profile_by_id = async (req, res) => {
   }
 };
 
+const delete_user_by_username = async (req, res) => {
+  const { username } = req.body;
+  console.log(`Deleiting: ${username}`);
+
+  try {
+    // Find and delete the user by username
+    const result = await UserModel.destroy({
+      where: {
+        username: username,
+      },
+    });
+
+    if (result === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "Error deleting user", error });
+  }
+};
+
 module.exports = {
   load_platform_users,
   update_user_profile,
   load_user_profile_by_id,
+  delete_user_by_username,
 };

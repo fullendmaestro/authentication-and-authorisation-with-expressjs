@@ -18,4 +18,6 @@ router.put("/user", authentication, authorisation("user"), (req, res) =>
   authController.update_user_profile(req, res)
 );
 
+// Delete user route should be handled from the admin routes handler!!!
+
 module.exports = router;

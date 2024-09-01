@@ -23,4 +23,12 @@ router.get(
   (req, res) => adminController.load_user_profile_by_id(req, res)
 );
 
+// Delete user route (only Authenticated then Authorized users can delete)
+router.post(
+  "/delete/user",
+  authentication, // Ensure user is authenticated middleware,
+  authorisation("admin"), // Ensure user is authorized as admin middleware
+  (req, res) => adminController.delete_user_by_username(req, res)
+);
+
 module.exports = router;

@@ -12,6 +12,7 @@
       <thead>
         <tr>
           <th>ID</th>
+          <th>Name</th>
           <th>Email</th>
           <th>Actions</th>
         </tr>
@@ -20,6 +21,17 @@
         <!-- Users will be loaded here -->
       </tbody>
     </table>
+
+    <!-- Delete Modal Popup -->
+    <div id="delete-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Delete User</h2>
+        <label for="popup-username">Confirm Username to Delete:</label>
+        <input type="text" id="popup-username" required />
+        <button id="confirm-delete">Confirm Delete</button>
+      </div>
+    </div>
 
     <script>
       async function loadUsers() {
@@ -38,19 +50,83 @@
         tbody.innerHTML = "";
         users.forEach((user) => {
           const row = tbody.insertRow();
-          row.insertCell(0).innerText = user.id;
-          row.insertCell(1).innerText = user.email;
-          const actionsCell = row.insertCell(2);
+          row.insertCell(0).innerText = user.id; // User ID
+          row.insertCell(1).innerText = user.username; // Username (Name column)
+          row.insertCell(2).innerText = user.email; // User Email
+          const actionsCell = row.insertCell(3);
+
+          // Edit Button
           const editButton = document.createElement("button");
           editButton.innerText = "Edit";
           editButton.onclick = () => {
             window.location.href = `./user.html?user_id=${user.id}`;
           };
           actionsCell.appendChild(editButton);
+
+          // Delete Button
+          const deleteButton = document.createElement("button");
+          deleteButton.innerText = "Delete";
+          deleteButton.style.marginTop = "10px"; // Add space between buttons
+          deleteButton.style.backgroundColor = "red"; // Add danger color 📣
+          deleteButton.onclick = () => {
+            openDeleteModal(user.username); // Open modal with the username
+          };
+          actionsCell.appendChild(deleteButton);
         });
       }
 
       loadUsers();
+
+      // Open Modal Function
+      function openDeleteModal(username) {
+        document.getElementById("delete-modal").style.display = "block";
+        document.getElementById("popup-username").value = username;
+      }
+
+      // Close Modal Function
+      document.querySelector(".close").addEventListener("click", function () {
+        document.getElementById("delete-modal").style.display = "none";
+      });
+
+      // Confirm Delete Button
+      document
+        .getElementById("confirm-delete")
+        .addEventListener("click", async function () {
+          const username = document.getElementById("popup-username").value;
+          if (!username) {
+            alert("Please enter a username");
+            return;
+          }
+
+          const response = await fetch(
+            `http://127.0.0.1:4001/admin/delete/user`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                username,
+              }),
+              credentials: "include",
+            }
+          );
+
+          if (response.ok) {
+            alert("User deleted successfully.");
+            document.getElementById("delete-modal").style.display = "none"; // Close modal after successful deletion
+            loadUsers(); // Reload users to reflect changes
+          } else {
+            const result = await response.json();
+            alert(result.message || "Failed to delete user.");
+          }
+        });
+
+      // Close the modal if user clicks outside of it
+      window.onclick = function (event) {
+        const modal = document.getElementById("delete-modal");
+        if (event.target === modal) {
+          modal.style.display = "none";
+        }
+      };
     </script>
   </body>
 </html>

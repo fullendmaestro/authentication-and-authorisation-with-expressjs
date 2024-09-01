@@ -177,6 +177,8 @@ const update_user_profile = async (req, res) => {
   }
 };
 
+// Deleting by controller should be handled from admin controlers: adminController.js
+
 module.exports = {
   login,
   logout,
