@@ -1,5 +1,7 @@
 # authentication-and-authorisation-with-expressjs
 
+![Authentication vs Authorizatio Diagram](./Authe_vs_Autho.png)
+
 # User Account Deletion After Authentication
 
 ## Introduction
